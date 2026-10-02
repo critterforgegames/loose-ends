@@ -33,6 +33,7 @@ let playing = false; // идёт ли сейчас игровой процесс
 // потом «игра началась». Начало, пришедшее раньше, откладываем до gameReady.
 let ready = false;
 let pendingStart = false;
+const pendingLevel = [];   // события уровней до gameReady
 const pauseHandlers = [];
 const resumeHandlers = [];
 const audioHandlers = [];
@@ -244,6 +245,7 @@ export const platform = {
       pendingStart = false;
       this.gameplayStart();
     }
+    for (const e of pendingLevel.splice(0)) this.levelEvent(...e);
   },
 
   // Игровой процесс идёт / остановлен (карточки, реклама). Нужно Яндексу и Playgama.
@@ -263,6 +265,15 @@ export const platform = {
     if (ysdk) ysdk.features.GameplayAPI?.stop();
     if (pg) pg.platform.sendMessage("gameplay_stopped");
     if (cg) cg.game.gameplayStop();
+  },
+
+  // События уровней для аналитики площадки (Playgama показывает по ним прохождение и отвал).
+  // world - режим: "levels" или "daily".
+  levelEvent(kind, level, world = "levels") {
+    if (!pg && KIND !== "playgama") return;
+    if (!ready) { pendingLevel.push([kind, level, world]); return; }
+    if (!pg) return;
+    try { pg.platform.sendMessage(`level_${kind}`, { level, world }); } catch { /* не мешаем игре */ }
   },
 
   async load() {

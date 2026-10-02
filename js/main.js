@@ -116,6 +116,7 @@ function startLevel(level) {
   updateHud();
   resize();   // после updateHud: высота подсказки внизу влияет на размер поля
   if (game.kind === "normal") platform.gameplayStart();
+  platform.levelEvent("started", level);
   tutorialLeft = level === 1 && save.best === 0 ? TUTORIAL_MOVES : 0;
   tutorialNext();
   if (game.kind === "hard") {
@@ -134,6 +135,7 @@ function startDaily() {
   updateHud();
   resize();
   platform.gameplayStart();
+  platform.levelEvent("started", dayNumber(today()), "daily");
 }
 
 function setTheme(id) {
@@ -232,6 +234,7 @@ const wait = ms => new Promise(r => setTimeout(r, ms));
 
 async function onWin() {
   platform.gameplayStop();
+  platform.levelEvent("completed", mode === "daily" ? dayNumber(today()) : game.level, mode);
   await wait(450);
   audio.play("win");
   fx.confetti(cssW, theme.palette, 70);
@@ -289,6 +292,7 @@ async function winDaily() {
 
 async function onLose() {
   platform.gameplayStop();
+  platform.levelEvent("failed", mode === "daily" ? dayNumber(today()) : game.level, mode);
   await wait(450);
   audio.play("lose");
   const buttons = [{ text: t("retry"), value: "retry", primary: true }];

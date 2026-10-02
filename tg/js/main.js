@@ -1,20 +1,20 @@
 // Точка входа: загрузка, игровой цикл, ввод, интерфейс, награды.
 
-import { platform } from "./platform.js?v=ccb6f491eb";
-import { setLanguage, t, fmt, LANGUAGES, resolveLanguage } from "./i18n.js?v=ccb6f491eb";
-import { audio } from "./audio.js?v=ccb6f491eb";
-import { Game } from "./game.js?v=ccb6f491eb";
-import { levelKind } from "./level.js?v=ccb6f491eb";
-import { computeLayout, cellAt, cellCenter, draw } from "./render.js?v=ccb6f491eb";
-import { Fx } from "./fx.js?v=ccb6f491eb";
-import { THEMES, themeById, applyTheme } from "./themes.js?v=ccb6f491eb";
-import * as screens from "./screens.js?v=ccb6f491eb";
+import { platform } from "./platform.js?v=c5f3f44135";
+import { setLanguage, t, fmt, LANGUAGES, resolveLanguage } from "./i18n.js?v=c5f3f44135";
+import { audio } from "./audio.js?v=c5f3f44135";
+import { Game } from "./game.js?v=c5f3f44135";
+import { levelKind } from "./level.js?v=c5f3f44135";
+import { computeLayout, cellAt, cellCenter, draw } from "./render.js?v=c5f3f44135";
+import { Fx } from "./fx.js?v=c5f3f44135";
+import { THEMES, themeById, applyTheme } from "./themes.js?v=c5f3f44135";
+import * as screens from "./screens.js?v=c5f3f44135";
 import {
   MAX_HINTS, DAILY_DIFFICULTY, DAILY_XP, parseSave, defaultSave,
   starsFor, levelReward, xpGain, iqFromXp, rankOf, rankProgress,
   chestDue, levelsToChest, chestReward, CHEST_EVERY,
   dayKey, dayNumber, currentStreak, dailySolvedToday, dailyAfterWin, dailyReward,
-} from "./progress.js?v=ccb6f491eb";
+} from "./progress.js?v=c5f3f44135";
 
 const canvas = document.getElementById("board");
 const ctx = canvas.getContext("2d");
@@ -116,6 +116,7 @@ function startLevel(level) {
   updateHud();
   resize();   // после updateHud: высота подсказки внизу влияет на размер поля
   if (game.kind === "normal") platform.gameplayStart();
+  platform.levelEvent("started", level);
   tutorialLeft = level === 1 && save.best === 0 ? TUTORIAL_MOVES : 0;
   tutorialNext();
   if (game.kind === "hard") {
@@ -134,6 +135,7 @@ function startDaily() {
   updateHud();
   resize();
   platform.gameplayStart();
+  platform.levelEvent("started", dayNumber(today()), "daily");
 }
 
 function setTheme(id) {
@@ -232,6 +234,7 @@ const wait = ms => new Promise(r => setTimeout(r, ms));
 
 async function onWin() {
   platform.gameplayStop();
+  platform.levelEvent("completed", mode === "daily" ? dayNumber(today()) : game.level, mode);
   await wait(450);
   audio.play("win");
   fx.confetti(cssW, theme.palette, 70);
@@ -289,6 +292,7 @@ async function winDaily() {
 
 async function onLose() {
   platform.gameplayStop();
+  platform.levelEvent("failed", mode === "daily" ? dayNumber(today()) : game.level, mode);
   await wait(450);
   audio.play("lose");
   const buttons = [{ text: t("retry"), value: "retry", primary: true }];

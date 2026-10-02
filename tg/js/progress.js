@@ -1,7 +1,7 @@
 // Мета-прогресс: очки и комбо, звёзды, IQ и звания, сундуки, головоломка дня и серия.
 // Чистая логика без DOM: всё проверяется тестами.
 
-import { levelKind } from "./level.js?v=ccb6f491eb";
+import { levelKind } from "./level.js?v=c5f3f44135";
 
 export const SAVE_VERSION = 3;
 export const MAX_HINTS = 5;
