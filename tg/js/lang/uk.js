@@ -83,6 +83,8 @@ export default {
   theme_ocean: "Океан",
   theme_sunset: "Захід сонця",
   theme_gold: "Золото",
+  previewOn: "Перегляд: {name}",
+  previewHint: "Бракує іскор? Натисни на тему — спробуєш її 10 секунд.",
   language: "Мова",
   auto: "Авто",
   adHintTitle: "Потрібна підказка?",

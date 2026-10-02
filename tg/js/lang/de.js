@@ -83,6 +83,8 @@ export default {
   theme_ocean: "Ozean",
   theme_sunset: "Sonnenuntergang",
   theme_gold: "Gold",
+  previewOn: "Vorschau: {name}",
+  previewHint: "Zu wenig Funken? Tippe auf ein Design, um es 10 Sekunden zu testen.",
   language: "Sprache",
   auto: "Automatisch",
   adHintTitle: "Brauchst du einen Tipp?",

@@ -83,6 +83,8 @@ export default {
   theme_ocean: "समुद्र",
   theme_sunset: "सूर्यास्त",
   theme_gold: "सोना",
+  previewOn: "पूर्वावलोकन: {name}",
+  previewHint: "चिंगारियाँ कम हैं? थीम पर टैप करें और 10 सेकंड आज़माएँ।",
   language: "भाषा",
   auto: "अपने-आप",
   adHintTitle: "संकेत चाहिए?",

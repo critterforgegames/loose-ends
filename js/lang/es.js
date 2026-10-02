@@ -83,6 +83,8 @@ export default {
   theme_ocean: "Océano",
   theme_sunset: "Atardecer",
   theme_gold: "Oro",
+  previewOn: "Vista previa: {name}",
+  previewHint: "¿Te faltan chispas? Toca un tema para probarlo 10 segundos.",
   language: "Idioma",
   auto: "Automático",
   adHintTitle: "¿Necesitas una pista?",

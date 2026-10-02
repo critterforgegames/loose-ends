@@ -83,6 +83,8 @@ export default {
   theme_ocean: "Oceano",
   theme_sunset: "Pôr do sol",
   theme_gold: "Ouro",
+  previewOn: "Prévia: {name}",
+  previewHint: "Faltam faíscas? Toque em um tema para testá-lo por 10 segundos.",
   language: "Idioma",
   auto: "Automático",
   adHintTitle: "Precisa de uma dica?",

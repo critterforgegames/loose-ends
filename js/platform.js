@@ -102,7 +102,9 @@ function gdAd(type) {
 }
 
 // Реклама Adsgram в Telegram. true, если ролик за награду досмотрен.
-function tgAd(ctrl) {
+// Если блок ответил ошибкой (например, ещё на модерации), до конца сессии его больше не трогаем.
+function tgAd(kind) {
+  const ctrl = adsgram[kind];
   return new Promise(resolve => {
     let done = false;
     const finish = ok => {
@@ -115,7 +117,10 @@ function tgAd(ctrl) {
     const limit = setTimeout(() => finish(false), 60000);
     firePause();
     try {
-      ctrl.show().then(r => finish(!!r?.done), () => finish(false));
+      ctrl.show().then(r => finish(!!r?.done), r => {
+        if (r?.error) adsgram[kind] = null;
+        finish(false);
+      });
     } catch { finish(false); }
   });
 }
@@ -192,12 +197,14 @@ export const platform = {
       try { tg.setHeaderColor("#11131d"); tg.setBackgroundColor("#11131d"); } catch { /* старый клиент */ }
       tg.onEvent?.("deactivated", firePause);
       tg.onEvent?.("activated", fireResume);
+      // Реклама грузится в фоне: запуск игры её не ждёт (на телефоне скрипт может грузиться долго).
       if (IDS.adsgramInterstitial || IDS.adsgramRewarded) {
-        try {
-          await loadScript("https://sad.adsgram.ai/js/sad.min.js");
-          if (IDS.adsgramInterstitial) adsgram.interstitial = window.Adsgram.init({ blockId: IDS.adsgramInterstitial });
-          if (IDS.adsgramRewarded) adsgram.rewarded = window.Adsgram.init({ blockId: IDS.adsgramRewarded });
-        } catch { adsgram = {}; }
+        loadScript("https://sad.adsgram.ai/js/sad.min.js").then(() => {
+          try {
+            if (IDS.adsgramInterstitial) adsgram.interstitial = window.Adsgram.init({ blockId: IDS.adsgramInterstitial });
+            if (IDS.adsgramRewarded) adsgram.rewarded = window.Adsgram.init({ blockId: IDS.adsgramRewarded });
+          } catch { adsgram = {}; }
+        }, () => { adsgram = {}; });
       }
     }
     if (KIND === "gamedistribution") {
@@ -338,7 +345,7 @@ export const platform = {
     lastInterstitial = now;
     if (pg) return pg.advertisement.isInterstitialSupported ? pgAd("interstitial").then(() => {}) : Promise.resolve();
     if (cg) return cgAd("midgame").then(() => {});
-    if (KIND === "telegram") return adsgram.interstitial ? tgAd(adsgram.interstitial).then(() => {}) : Promise.resolve();
+    if (KIND === "telegram") return adsgram.interstitial ? tgAd("interstitial").then(() => {}) : Promise.resolve();
     if (KIND === "gamedistribution") return window.gdsdk ? gdAd("interstitial").then(() => {}) : Promise.resolve();
     if (!ysdk) return Promise.resolve();
     return new Promise(resolve => {
@@ -368,7 +375,7 @@ export const platform = {
   showRewarded() {
     if (pg) return pgAd("rewarded");
     if (cg) return cgAd("rewarded");
-    if (KIND === "telegram") return adsgram.rewarded ? tgAd(adsgram.rewarded) : Promise.resolve(false);
+    if (KIND === "telegram") return adsgram.rewarded ? tgAd("rewarded") : Promise.resolve(false);
     if (KIND === "gamedistribution") return window.gdsdk ? gdAd("rewarded") : Promise.resolve(false);
     if (!ysdk) return Promise.resolve(false);
     return new Promise(resolve => {

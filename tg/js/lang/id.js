@@ -83,6 +83,8 @@ export default {
   theme_ocean: "Samudra",
   theme_sunset: "Senja",
   theme_gold: "Emas",
+  previewOn: "Pratinjau: {name}",
+  previewHint: "Percikan kurang? Ketuk tema untuk mencobanya 10 detik.",
   language: "Bahasa",
   auto: "Otomatis",
   adHintTitle: "Butuh petunjuk?",

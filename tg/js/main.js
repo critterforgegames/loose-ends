@@ -141,6 +141,23 @@ function setTheme(id) {
   applyTheme(theme);
 }
 
+// Пробный просмотр темы, на которую пока не хватает искр: 10 секунд, потом своя тема.
+const PREVIEW_MS = 10000;
+let previewTimer = null;
+
+function startPreview(id) {
+  clearTimeout(previewTimer);
+  setTheme(id);
+  if (layout) fx.text(cssW / 2, layout.oy - 6, t("previewOn", { name: t("theme_" + id) }), theme.accent, 24, 2.2);
+  previewTimer = setTimeout(endPreview, PREVIEW_MS);
+}
+
+function endPreview() {
+  clearTimeout(previewTimer);
+  previewTimer = null;
+  if (theme.id !== save.theme) setTheme(save.theme);
+}
+
 // ---------- ввод ----------
 
 canvas.addEventListener("pointerdown", e => {
@@ -152,10 +169,9 @@ canvas.addEventListener("pointerdown", e => {
 
   if (res.type === "out") {
     const color = theme.palette[res.snake.id % theme.palette.length];
-    for (const cell of res.snake.cells) {
-      const p = cellCenter(layout, cell);
-      fx.burst(p.x, p.y, color, 5, 150, layout.cs * 0.07);
-    }
+    const centers = res.snake.cells.map(cell => cellCenter(layout, cell));
+    for (const p of centers) fx.burst(p.x, p.y, color, theme.effect ? 3 : 5, 150, layout.cs * 0.07);
+    fx.themed(theme.effect, centers, color, layout.cs);
     const head = cellCenter(layout, res.snake.cells[res.snake.cells.length - 1]);
     fx.text(head.x, head.y - layout.cs * 0.3, `+${res.points}`, color, Math.max(16, layout.cs * 0.42));
     audio.play("slide", 2 ** (Math.min(res.combo - 1, 14) / 12));
@@ -368,6 +384,7 @@ async function openDaily() {
 
 function openShop() {
   if (screens.isOpen()) return;
+  endPreview();
   const tiles = () => THEMES.map(th => {
     const owned = save.owned.includes(th.id);
     const using = save.theme === th.id;
@@ -385,7 +402,7 @@ function openShop() {
   };
 
   screens.show(
-    `<h2>${t("themes")}</h2><p class="wallet"></p><div class="tiles"></div>`,
+    `<h2>${t("themes")}</h2><p class="wallet"></p><div class="tiles"></div><p class="hint-line">${t("previewHint")}</p>`,
     [{ text: t("close"), value: "close", primary: true }],
     card => {
       render(card);
@@ -395,8 +412,10 @@ function openShop() {
         const th = themeById(el.dataset.id);
         if (!save.owned.includes(th.id)) {
           if (save.sparks < th.price) {
+            // Не хватает искр - даём посмотреть тему в игре 10 секунд.
             audio.play("nope");
-            el.classList.remove("shake"); void el.offsetWidth; el.classList.add("shake");
+            screens.close("close");
+            startPreview(th.id);
             return;
           }
           save.sparks -= th.price;
@@ -404,6 +423,7 @@ function openShop() {
           audio.play("buy");
         }
         save.theme = th.id;
+        endPreview();
         setTheme(th.id);
         persist();
         render(card);
@@ -496,6 +516,10 @@ function frame(now) {
   const dt = Math.min(0.05, (now - last) / 1000);
   last = now;
   game.update(dt);
+  if (layout && game.state === "play" && theme.effect) {
+    const box = { x: layout.ox, y: layout.oy, w: layout.cs * game.w, h: layout.cs * game.h };
+    fx.ambient(theme.effect, theme.ambient, box, theme.palette, layout.cs, dt);
+  }
   fx.update(dt);
   ctx.clearRect(0, 0, cssW, cssH);
   if (layout) draw(ctx, game, layout, now, theme);

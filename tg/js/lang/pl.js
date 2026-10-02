@@ -83,6 +83,8 @@ export default {
   theme_ocean: "Ocean",
   theme_sunset: "Zachód słońca",
   theme_gold: "Złoto",
+  previewOn: "Podgląd: {name}",
+  previewHint: "Za mało iskier? Dotknij motywu, by wypróbować go przez 10 sekund.",
   language: "Język",
   auto: "Automatycznie",
   adHintTitle: "Potrzebujesz podpowiedzi?",

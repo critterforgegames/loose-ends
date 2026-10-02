@@ -83,6 +83,8 @@ export default {
   theme_ocean: "Okyanus",
   theme_sunset: "Gün batımı",
   theme_gold: "Altın",
+  previewOn: "Önizleme: {name}",
+  previewHint: "Kıvılcım yetmiyor mu? Bir temaya dokun, 10 saniye dene.",
   language: "Dil",
   auto: "Otomatik",
   adHintTitle: "İpucu lazım mı?",

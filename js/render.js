@@ -56,6 +56,7 @@ export function draw(ctx, game, L, now, theme) {
     const color = bump ? BUMP_COLOR : theme.palette[s.id % theme.palette.length];
     const glow = s.id === game.hint ? 8 + pulse * 18 : theme.glow;
     drawFlat(ctx, shape, cs, color, glow);
+    if (theme.texture === "chalk") drawChalk(ctx, shape, cs, theme.bg[1]);
   }
   for (const { s, shape } of moving) {
     const k = Math.min(1, 0.4 + s.anim.offset * 1.2);   // свечение быстро разгорается
@@ -69,6 +70,22 @@ function drawFlat(ctx, shape, cs, color, glow) {
   ctx.lineJoin = "round";
   if (glow) { ctx.shadowColor = color; ctx.shadowBlur = glow; }
   strokeShape(ctx, shape, cs, 0, 0, cs * 0.24, color);
+  ctx.restore();
+}
+
+// Меловая текстура: поверх линии - прерывистые штрихи цвета доски, как у мела на доске.
+function drawChalk(ctx, shape, cs, board) {
+  ctx.save();
+  ctx.lineCap = "round";
+  ctx.strokeStyle = board;
+  ctx.globalAlpha = 0.32;
+  ctx.lineWidth = cs * 0.035;
+  ctx.setLineDash([cs * 0.16, cs * 0.09]);
+  tracePath(ctx, shape.px, cs * 0.05, -cs * 0.05);
+  ctx.stroke();
+  ctx.setLineDash([cs * 0.06, cs * 0.14]);
+  tracePath(ctx, shape.px, -cs * 0.06, cs * 0.04);
+  ctx.stroke();
   ctx.restore();
 }
 

@@ -83,6 +83,8 @@ export default {
   theme_ocean: "Океан",
   theme_sunset: "Закат",
   theme_gold: "Золото",
+  previewOn: "Просмотр: {name}",
+  previewHint: "Не хватает искр? Нажми на тему — попробуешь её 10 секунд.",
   language: "Язык",
   auto: "Авто",
   adHintTitle: "Нужна подсказка?",

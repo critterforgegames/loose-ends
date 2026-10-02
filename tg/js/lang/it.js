@@ -83,6 +83,8 @@ export default {
   theme_ocean: "Oceano",
   theme_sunset: "Tramonto",
   theme_gold: "Oro",
+  previewOn: "Anteprima: {name}",
+  previewHint: "Scintille insufficienti? Tocca un tema per provarlo 10 secondi.",
   language: "Lingua",
   auto: "Automatica",
   adHintTitle: "Ti serve un aiuto?",

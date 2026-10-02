@@ -83,6 +83,8 @@ export default {
   theme_ocean: "Ocean",
   theme_sunset: "Sunset",
   theme_gold: "Gold",
+  previewOn: "Preview: {name}",
+  previewHint: "Not enough sparks? Tap a theme to try it for 10 seconds.",
   language: "Language",
   auto: "Auto",
   adHintTitle: "Need a hint?",
