@@ -1,7 +1,7 @@
 // Состояние партии: линии, жизни, анимации. Без DOM и без отрисовки.
 
-import { generateLevel, levelParams, buildGrid, blockedAt, rayCells, DIRS } from "./level.js";
-import { COMBO_WINDOW, comboMultiplier, linePoints } from "./progress.js";
+import { generateLevel, levelParams, buildGrid, blockedAt, rayCells, DIRS } from "./level.js?v=92d8b91250";
+import { COMBO_WINDOW, comboMultiplier, linePoints } from "./progress.js?v=92d8b91250";
 
 const OUT_SPEED = 20;   // клеток в секунду при вылете
 const BUMP_TIME = 0.34; // секунды на «упёрлась и вернулась»

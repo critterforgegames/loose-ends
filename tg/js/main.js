@@ -1,20 +1,20 @@
 // Точка входа: загрузка, игровой цикл, ввод, интерфейс, награды.
 
-import { platform } from "./platform.js";
-import { setLanguage, t, fmt, LANGUAGES, resolveLanguage } from "./i18n.js";
-import { audio } from "./audio.js";
-import { Game } from "./game.js";
-import { levelKind } from "./level.js";
-import { computeLayout, cellAt, cellCenter, draw } from "./render.js";
-import { Fx } from "./fx.js";
-import { THEMES, themeById, applyTheme } from "./themes.js";
-import * as screens from "./screens.js";
+import { platform } from "./platform.js?v=92d8b91250";
+import { setLanguage, t, fmt, LANGUAGES, resolveLanguage } from "./i18n.js?v=92d8b91250";
+import { audio } from "./audio.js?v=92d8b91250";
+import { Game } from "./game.js?v=92d8b91250";
+import { levelKind } from "./level.js?v=92d8b91250";
+import { computeLayout, cellAt, cellCenter, draw } from "./render.js?v=92d8b91250";
+import { Fx } from "./fx.js?v=92d8b91250";
+import { THEMES, themeById, applyTheme } from "./themes.js?v=92d8b91250";
+import * as screens from "./screens.js?v=92d8b91250";
 import {
   MAX_HINTS, DAILY_DIFFICULTY, DAILY_XP, parseSave, defaultSave,
   starsFor, levelReward, xpGain, iqFromXp, rankOf, rankProgress,
   chestDue, levelsToChest, chestReward, CHEST_EVERY,
   dayKey, dayNumber, currentStreak, dailySolvedToday, dailyAfterWin, dailyReward,
-} from "./progress.js";
+} from "./progress.js?v=92d8b91250";
 
 const canvas = document.getElementById("board");
 const ctx = canvas.getContext("2d");
