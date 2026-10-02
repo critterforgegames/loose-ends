@@ -29,6 +29,10 @@ let cg = null;       // CrazyGames SDK после init
 let adsgram = {};    // контроллеры рекламы Adsgram в Telegram: { interstitial, rewarded }
 const TG_LIMIT = 4096;   // предел значения в облачном хранилище Telegram
 let playing = false; // идёт ли сейчас игровой процесс (GameplayAPI / gameplay_started)
+// Площадки ждут сначала «игра загружена» (game_ready / LoadingAPI.ready / loadingStop),
+// потом «игра началась». Начало, пришедшее раньше, откладываем до gameReady.
+let ready = false;
+let pendingStart = false;
 const pauseHandlers = [];
 const resumeHandlers = [];
 const audioHandlers = [];
@@ -231,14 +235,20 @@ export const platform = {
   },
 
   gameReady() {
+    ready = true;
     if (KIND === "youtube") yt.game.gameReady();
     if (ysdk) ysdk.features.LoadingAPI?.ready();
     if (pg) pg.platform.sendMessage("game_ready");
     if (cg) cg.game.loadingStop?.();
+    if (pendingStart) {
+      pendingStart = false;
+      this.gameplayStart();
+    }
   },
 
   // Игровой процесс идёт / остановлен (карточки, реклама). Нужно Яндексу и Playgama.
   gameplayStart() {
+    if (!ready) { pendingStart = true; return; }
     if (playing) return;
     playing = true;
     if (ysdk) ysdk.features.GameplayAPI?.start();
@@ -247,6 +257,7 @@ export const platform = {
   },
 
   gameplayStop() {
+    pendingStart = false;
     if (!playing) return;
     playing = false;
     if (ysdk) ysdk.features.GameplayAPI?.stop();

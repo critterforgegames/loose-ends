@@ -2,18 +2,18 @@
 // если в языке нет строки, берётся английская. Сами тексты - в папке lang/.
 // В строках можно подставлять значения: t("chestIn", { n: 3 }).
 
-import en from "./lang/en.js?v=233368dc1d";
-import ru from "./lang/ru.js?v=233368dc1d";
-import uk from "./lang/uk.js?v=233368dc1d";
-import es from "./lang/es.js?v=233368dc1d";
-import pt from "./lang/pt.js?v=233368dc1d";
-import fr from "./lang/fr.js?v=233368dc1d";
-import de from "./lang/de.js?v=233368dc1d";
-import it from "./lang/it.js?v=233368dc1d";
-import tr from "./lang/tr.js?v=233368dc1d";
-import pl from "./lang/pl.js?v=233368dc1d";
-import id from "./lang/id.js?v=233368dc1d";
-import hi from "./lang/hi.js?v=233368dc1d";
+import en from "./lang/en.js?v=ccb6f491eb";
+import ru from "./lang/ru.js?v=ccb6f491eb";
+import uk from "./lang/uk.js?v=ccb6f491eb";
+import es from "./lang/es.js?v=ccb6f491eb";
+import pt from "./lang/pt.js?v=ccb6f491eb";
+import fr from "./lang/fr.js?v=ccb6f491eb";
+import de from "./lang/de.js?v=ccb6f491eb";
+import it from "./lang/it.js?v=ccb6f491eb";
+import tr from "./lang/tr.js?v=ccb6f491eb";
+import pl from "./lang/pl.js?v=ccb6f491eb";
+import id from "./lang/id.js?v=ccb6f491eb";
+import hi from "./lang/hi.js?v=ccb6f491eb";
 
 // Порядок - как в списке выбора. name - самоназвание языка, locale - формат чисел.
 export const LANGUAGES = [

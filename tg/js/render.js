@@ -1,6 +1,6 @@
 // Отрисовка поля и линий на canvas.
 
-import { DIRS } from "./level.js?v=233368dc1d";
+import { DIRS } from "./level.js?v=ccb6f491eb";
 
 const BUMP_COLOR = "#f87171";
 
