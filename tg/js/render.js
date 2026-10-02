@@ -55,7 +55,8 @@ export function draw(ctx, game, L, now, theme) {
     const bump = s.anim && s.anim.kind === "bump";
     const color = bump ? BUMP_COLOR : theme.palette[s.id % theme.palette.length];
     const glow = s.id === game.hint ? 8 + pulse * 18 : theme.glow;
-    drawFlat(ctx, shape, cs, color, glow);
+    if (theme.texture === "candy" && !bump) drawCandy(ctx, shape, cs, color, glow);
+    else drawFlat(ctx, shape, cs, color, glow);
     if (theme.texture === "chalk") drawChalk(ctx, shape, cs, theme.bg[1]);
   }
   for (const { s, shape } of moving) {
@@ -70,6 +71,37 @@ function drawFlat(ctx, shape, cs, color, glow) {
   ctx.lineJoin = "round";
   if (glow) { ctx.shadowColor = color; ctx.shadowBlur = glow; }
   strokeShape(ctx, shape, cs, 0, 0, cs * 0.24, color);
+  ctx.restore();
+}
+
+// Леденец: тень под линией, сама линия, белые поперечные полоски (как у карамельной трости)
+// и глянцевый блик сверху.
+function drawCandy(ctx, shape, cs, color, glow) {
+  const w = cs * 0.34;
+  ctx.save();
+  ctx.lineCap = "round";
+  ctx.lineJoin = "round";
+  ctx.shadowColor = "rgba(120, 20, 70, 0.30)";
+  ctx.shadowBlur = cs * 0.14;
+  ctx.shadowOffsetY = cs * 0.08;
+  if (glow) { ctx.shadowColor = color; ctx.shadowBlur = glow; ctx.shadowOffsetY = 0; }
+  strokeShape(ctx, shape, cs, 0, 0, w, color);
+  ctx.shadowColor = "transparent";
+  // Широкие белые полосы поперёк линии, как у карамели.
+  ctx.globalAlpha = 0.5;
+  ctx.strokeStyle = "#ffffff";
+  ctx.lineWidth = w * 0.92;
+  ctx.lineCap = "butt";
+  ctx.setLineDash([cs * 0.14, cs * 0.16]);
+  tracePath(ctx, shape.px, 0, 0);
+  ctx.stroke();
+  ctx.setLineDash([]);
+  // Глянец: мягкий светлый отблеск у верхнего края.
+  ctx.lineCap = "round";
+  ctx.globalAlpha = 0.35;
+  ctx.lineWidth = w * 0.22;
+  tracePath(ctx, shape.px, -w * 0.18, -w * 0.22);
+  ctx.stroke();
   ctx.restore();
 }
 
