@@ -27,19 +27,19 @@ export const THEMES = [
     palette: ["#f8fafc", "#fde047", "#f9a8d4", "#7dd3fc", "#86efac", "#fdba74", "#c4b5fd", "#fca5a5", "#5eead4", "#bef264"],
   },
   {
-    id: "ocean", price: 500000, effect: "bubbles", ambient: 1.2,
+    id: "ocean", price: 500000, effect: "bubbles", ambient: 1.2, texture: "ocean",
     bg: ["#0e3350", "#071827"], card: "#0f2c44", text: "#e6f6ff", muted: "#7fa6bf", accent: "#22d3ee",
     board: "rgba(120,220,255,0.05)", dot: "rgba(160,230,255,0.16)", glow: 4,
     palette: ["#22d3ee", "#ff7f6e", "#ffe066", "#4ade80", "#c084fc", "#f9a8d4", "#60a5fa", "#fb923c", "#2dd4bf", "#f1f5f9"],
   },
   {
-    id: "sunset", price: 1000000, effect: "embers", ambient: 1.4,
+    id: "sunset", price: 1000000, effect: "embers", ambient: 1.4, texture: "sunset",
     bg: ["#46203f", "#1c1024"], card: "#3a1b36", text: "#fff1ea", muted: "#c39bb0", accent: "#fb923c",
     board: "rgba(255,180,150,0.05)", dot: "rgba(255,190,170,0.16)", glow: 4,
     palette: ["#fb923c", "#f472b6", "#facc15", "#38bdf8", "#a3e635", "#f87171", "#c084fc", "#2dd4bf", "#fda4af", "#fde68a"],
   },
   {
-    id: "gold", price: 2000000, effect: "glitter", ambient: 1.6,
+    id: "gold", price: 2000000, effect: "glitter", ambient: 1.6, texture: "gold",
     bg: ["#22201c", "#0c0a09"], card: "#1f1c17", text: "#fdf6e3", muted: "#a8a08a", accent: "#fbbf24",
     board: "rgba(255,215,120,0.045)", dot: "rgba(255,215,120,0.16)", glow: 6,
     // Драгоценные камни в золоте: золото, изумруд, рубин, сапфир, аметист, жемчуг, медь, нефрит, розовый кварц, перидот.

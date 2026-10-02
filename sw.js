@@ -1,4 +1,4 @@
-const VERSION = "92d8b91250";
+const VERSION = "233368dc1d";
 const FILES = ["./", "icons/icon-192.png", "icons/icon-512.png", "icons/maskable-512.png", "js/audio.js", "js/fx.js", "js/game.js", "js/i18n.js", "js/lang/de.js", "js/lang/en.js", "js/lang/es.js", "js/lang/fr.js", "js/lang/hi.js", "js/lang/id.js", "js/lang/it.js", "js/lang/pl.js", "js/lang/pt.js", "js/lang/ru.js", "js/lang/tr.js", "js/lang/uk.js", "js/level.js", "js/main.js", "js/platform.js", "js/progress.js", "js/render.js", "js/screens.js", "js/themes.js", "manifest.webmanifest"];
 self.addEventListener("install", e => {
   e.waitUntil(caches.open(VERSION).then(c => c.addAll(FILES)).then(() => self.skipWaiting()));

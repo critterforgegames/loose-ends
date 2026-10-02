@@ -55,9 +55,13 @@ export function draw(ctx, game, L, now, theme) {
     const bump = s.anim && s.anim.kind === "bump";
     const color = bump ? BUMP_COLOR : theme.palette[s.id % theme.palette.length];
     const glow = s.id === game.hint ? 8 + pulse * 18 : theme.glow;
-    if (theme.texture === "candy" && !bump) drawCandy(ctx, shape, cs, color, glow);
+    const style = bump ? null : theme.texture;
+    if (style === "candy") drawCandy(ctx, shape, cs, color, glow);
+    else if (style === "chalk") drawChalkLine(ctx, shape, cs, color, theme.bg[1], s.id);
+    else if (style === "ocean") drawOcean(ctx, shape, cs, color, glow, now, s.id);
+    else if (style === "sunset") drawSunset(ctx, shape, cs, color, glow);
+    else if (style === "gold") drawGold(ctx, shape, cs, color, glow, now, s.id);
     else drawFlat(ctx, shape, cs, color, glow);
-    if (theme.texture === "chalk") drawChalk(ctx, shape, cs, theme.bg[1]);
   }
   for (const { s, shape } of moving) {
     const k = Math.min(1, 0.4 + s.anim.offset * 1.2);   // свечение быстро разгорается
@@ -103,6 +107,119 @@ function drawCandy(ctx, shape, cs, color, glow) {
   tracePath(ctx, shape.px, -w * 0.18, -w * 0.22);
   ctx.stroke();
   ctx.restore();
+}
+
+// Мел: линия нарисована от руки - неровный край, два прохода мелом и штрихи цвета доски.
+function drawChalkLine(ctx, shape, cs, color, board, seed) {
+  const rough = wobble(shape.px, cs * 0.035, seed, cs);
+  const roughShape = { px: rough, dx: shape.dx, dy: shape.dy };
+  ctx.save();
+  ctx.lineCap = "round";
+  ctx.lineJoin = "round";
+  ctx.globalAlpha = 0.9;
+  strokeShape(ctx, roughShape, cs, 0, 0, cs * 0.22, color);
+  ctx.globalAlpha = 0.45;
+  ctx.strokeStyle = color;
+  ctx.lineWidth = cs * 0.1;
+  tracePath(ctx, wobble(shape.px, cs * 0.05, seed + 7, cs), cs * 0.03, cs * 0.02);
+  ctx.stroke();
+  ctx.restore();
+  drawChalk(ctx, roughShape, cs, board);
+}
+
+// Точки линии с мелкой неровностью: отрезки делятся на шаги, к каждому - сдвиг поперёк.
+// Шум зависит только от seed и номера шага, поэтому линия не дрожит от кадра к кадру.
+function wobble(px, amp, seed, cs) {
+  const out = [px[0]];
+  let k = 0;
+  for (let i = 1; i < px.length; i++) {
+    const a = px[i - 1], b = px[i];
+    const len = Math.hypot(b.x - a.x, b.y - a.y);
+    const steps = Math.max(1, Math.round(len / (cs * 0.3)));
+    const nx = -(b.y - a.y) / (len || 1), ny = (b.x - a.x) / (len || 1);
+    for (let j = 1; j <= steps; j++) {
+      const f = j / steps;
+      const n = j === steps ? 0 : Math.sin(seed * 12.9898 + (k++) * 78.233) * amp;
+      out.push({ x: a.x + (b.x - a.x) * f + nx * n, y: a.y + (b.y - a.y) * f + ny * n });
+    }
+  }
+  return out;
+}
+
+// Океан: линия с бегущим светлым переливом, как блики на воде.
+function drawOcean(ctx, shape, cs, color, glow, now, seed) {
+  ctx.save();
+  ctx.lineCap = "round";
+  ctx.lineJoin = "round";
+  ctx.shadowColor = color;
+  ctx.shadowBlur = Math.max(glow, cs * 0.15);
+  strokeShape(ctx, shape, cs, 0, 0, cs * 0.26, color);
+  ctx.shadowBlur = 0;
+  ctx.strokeStyle = shade(color, 0.6);
+  ctx.globalAlpha = 0.4;
+  ctx.lineWidth = cs * 0.14;
+  ctx.setLineDash([cs * 0.7, cs * 1.1]);
+  ctx.lineDashOffset = -(now / 1000) * cs * 0.9 - seed * cs * 0.37;
+  tracePath(ctx, shape.px, 0, 0);
+  ctx.stroke();
+  ctx.restore();
+}
+
+// Закат: линия переливается от светлого тёплого хвоста к насыщенной голове.
+function drawSunset(ctx, shape, cs, color, glow) {
+  const { px } = shape;
+  const t = px[0], h = px[px.length - 1];
+  const g = ctx.createLinearGradient(t.x, t.y, h.x + shape.dx * cs * 0.3, h.y + shape.dy * cs * 0.3);
+  g.addColorStop(0, mix(color, "#fde68a", 0.55));
+  g.addColorStop(0.55, color);
+  g.addColorStop(1, shade(color, -0.12));
+  ctx.save();
+  ctx.lineCap = "round";
+  ctx.lineJoin = "round";
+  ctx.shadowColor = color;
+  ctx.shadowBlur = Math.max(glow, cs * 0.18);
+  strokeShape(ctx, shape, cs, 0, 0, cs * 0.26, g);
+  ctx.restore();
+}
+
+// Золото: металлическая линия - тёмная кромка, светлый блик и пробегающий отсвет.
+function drawGold(ctx, shape, cs, color, glow, now, seed) {
+  ctx.save();
+  ctx.lineCap = "round";
+  ctx.lineJoin = "round";
+  if (glow) { ctx.shadowColor = color; ctx.shadowBlur = glow; }
+  strokeShape(ctx, shape, cs, 0, 0, cs * 0.3, shade(color, -0.35));
+  ctx.shadowBlur = 0;
+  strokeShape(ctx, shape, cs, 0, 0, cs * 0.22, color);
+  ctx.strokeStyle = shade(color, 0.65);
+  ctx.globalAlpha = 0.75;
+  ctx.lineWidth = cs * 0.05;
+  tracePath(ctx, shape.px, -cs * 0.035, -cs * 0.04);
+  ctx.stroke();
+  // Отсвет: светлая полоса раз в несколько секунд проходит по линии (у каждой линии - в своё время).
+  const period = 3200, phase = ((now + seed * 530) % period) / period;
+  if (phase < 0.35) {
+    const xs = shape.px.map(p => p.x), ys = shape.px.map(p => p.y);
+    const x0 = Math.min(...xs) - cs, x1 = Math.max(...xs) + cs;
+    const y0 = Math.min(...ys) - cs, y1 = Math.max(...ys) + cs;
+    const f = phase / 0.35;
+    const cx = x0 + (x1 - x0) * f, cy = y0 + (y1 - y0) * f;
+    const band = cs * 0.9;
+    const g = ctx.createLinearGradient(cx - band, cy - band, cx + band, cy + band);
+    g.addColorStop(0, "rgba(255,255,255,0)");
+    g.addColorStop(0.5, "rgba(255,255,255,0.85)");
+    g.addColorStop(1, "rgba(255,255,255,0)");
+    ctx.globalAlpha = 1;
+    strokeShape(ctx, shape, cs, 0, 0, cs * 0.22, g);
+  }
+  ctx.restore();
+}
+
+// Смесь двух цветов #rrggbb: k = 0 - первый, 1 - второй.
+function mix(a, b, k) {
+  const pa = parseInt(a.slice(1), 16), pb = parseInt(b.slice(1), 16);
+  const ch = s => Math.round(((pa >> s) & 255) * (1 - k) + ((pb >> s) & 255) * k);
+  return `rgb(${ch(16)}, ${ch(8)}, ${ch(0)})`;
 }
 
 // Меловая текстура: поверх линии - прерывистые штрихи цвета доски, как у мела на доске.
