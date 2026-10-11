@@ -54,6 +54,7 @@ li{margin:4px 0}
 .step::before{counter-increment:s;content:counter(s);display:inline-grid;place-items:center;width:28px;height:28px;border-radius:50%;background:var(--accent);color:var(--accent-ink);font-family:var(--display);font-weight:700;margin-bottom:8px}
 .price{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
 .price .card strong{font-family:var(--display);font-size:30px;font-weight:900}
+.card .buy{margin-top:12px;display:inline-block}.paid{display:none;background:var(--tint);color:var(--accent);border-radius:10px;padding:14px 16px;margin:0 0 18px;font-weight:600}.paid.show{display:block}
 .contact{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:20px;display:grid;gap:12px}
 .mail{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
 .mail code{font-size:16px;background:var(--bg);padding:8px 12px;border-radius:6px;border:1px solid var(--line);user-select:all}
@@ -164,7 +165,7 @@ footer a{color:var(--muted)}
     <h2>Free while I learn what you need</h2>
     <div class="price">
       <div class="card"><span class="n">First 10 games</span><strong>$0</strong><p>In return: honest feedback and permission to show the result here as an example.</p></div>
-      <div class="card"><span class="n">After that</span><strong>$19</strong><p>Per kit: eight covers, three Shorts, store text. Card payment through Polar.sh.</p></div>
+      <div class="card"><span class="n">After that</span><strong>$19</strong><p>Per kit: eight covers, three Shorts, store text. Card payment through Polar.sh.</p><a class="btn buy" href="https://buy.polar.sh/polar_cl_SjEvpGdX6HRIFO0BfaKBp0hNlhOOUWOTbbljG0pz57d" target="_blank" rel="noopener">Buy a kit, $19</a><p class="fine">After paying, email the link to your game and your icon. Files arrive within 24 hours.</p></div>
       <div class="card"><span class="n">Covers only</span><strong>$9</strong><p>Eight sizes with your title, no videos. Same 24-hour turnaround.</p></div>
     </div>
   </section>
@@ -172,6 +173,7 @@ footer a{color:var(--muted)}
   <section id="contact">
     <span class="eyebrow">Get a kit</span>
     <h2>Send me your game</h2>
+    <div class="paid" id="paid">Payment received, thank you. Email the link to your game and your icon to the address below and I will send the kit within 24 hours.</div>
     <div class="contact">
       <p>Email the link to your game and your icon. Put the game’s name in the subject line.</p>
       <div class="mail"><code id="mail">critterforgegames@gmail.com</code><button class="copy" id="copyBtn" type="button">Copy address</button><span id="copied" class="fine" hidden>Copied</span></div>
@@ -187,6 +189,7 @@ footer a{color:var(--muted)}
 
 <script>
 (function(){
+  try{if(/[?&]paid=1/.test(location.search)){var p=document.getElementById('paid');p.classList.add('show');if(location.hash!=='#contact'){location.hash='#contact'}}}catch(e){}
   var btn=document.getElementById('copyBtn'),code=document.getElementById('mail'),ok=document.getElementById('copied');
   btn.addEventListener('click',function(){
     var text=code.textContent;
